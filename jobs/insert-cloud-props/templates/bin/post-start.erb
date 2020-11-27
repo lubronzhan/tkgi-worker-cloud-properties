@@ -4,16 +4,16 @@ if [ -f /var/vcap/jobs/insert-cloud-props/config/INSERTED ];
 then
   echo "already updated, skipping"
 else
-  echo "adding properties to disk_enable_uuid named cloud config template"
+  echo "adding properties to worker_managed_identity named cloud config template"
 
   cp  /var/vcap/jobs/bosh-update-config/config/cloud-config.yml  /var/vcap/jobs/bosh-update-config/config/cloud-config.yml.old
 
   # This magic looking JQ script basically says "make a JSON array out of these two files via the -s (slurp) option,
-  # so we can refer to them as .[0] and [.1] respectively.  
-  # then merge (with the jq * operator) the contents of the second file into the first file's first vm_extension array 
-  # entry, under the cloud_properties hash.  Then output the entire contents of the merged first file |(.[0]). 
+  # so we can refer to them as .[0] and [.1] respectively.
+  # then merge (with the jq * operator) the contents of the second file into the first file's first vm_extension array
+  # entry, under the cloud_properties hash.  Then output the entire contents of the merged first file |(.[0]).
 
-  /var/vcap/packages/jq/bin/jq -s '.[0].vm_extensions[0].cloud_properties=(.[0].vm_extensions[0].cloud_properties * .[1])|.[0]' /var/vcap/jobs/bosh-update-config/config/cloud-config.yml /var/vcap/jobs/insert-cloud-props/config/extras.json > /var/vcap/jobs/bosh-update-config/config/cloud-config.yml.new
+  /var/vcap/packages/jq/bin/jq -s '.[0].vm_extensions[1].cloud_properties=(.[0].vm_extensions[1].cloud_properties * .[1]) | .[0]' /var/vcap/jobs/bosh-update-config/config/cloud-config.yml /var/vcap/jobs/insert-cloud-props/config/extras.json > /var/vcap/jobs/bosh-update-config/config/cloud-config.yml.new
 
   # jq is a streaming CLI so we couldn't directly redirect the output into the source file, we needed to create
   # a new file.   we copy it over the original here.

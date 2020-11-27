@@ -12,12 +12,8 @@ addons:
       release: tkgi-worker-cloud-properties
       properties:
         cloud_properties:
-          memory_reservation_locked_to_max: true
-          cpu_reservation_mhz: 9588
-          vmx_options:
-            "sched.cpu.latencySensitivity": "high"
-            "ethernet0.coalescingScheme": "disabled"
-    include: 
+          accelerated_networking: true
+    include:
       jobs:
       - name: bosh-update-config
         release: pks-api
